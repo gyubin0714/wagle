@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="selectListCount">
+		SELECT
+				COUNT(*)
+		  FROM
+		  		PRODUCT
+		 WHERE
+		 		DELETE_YN='N'
+		   AND
+		   		METHOD = 'A'
+           AND
+    	  		PRODUCT_TRADE_STATUS = '판매중'
+	</entry>	
+	
+	<entry key="selectAuctionList">
+        SELECT * 
+          FROM(SELECT ROWNUM RNUM
+		  	   		 ,A.* FROM(SELECT
+                                      PRODUCT_NO
+                                     ,MEM_NO
+                                     ,PRODUCT_NAME
+                                     ,PRODUCT_PRICE
+                                     ,VIEW_CNT
+                                     ,PRODUCT_TRADE_STATUS
+                                     ,CREATE_DT
+                                     ,AUCTION_NO
+                                     ,PRICE_NOW
+                                     ,TO_CHAR(END_TIME, 'MM"월"DD"일" HH"시"MI"분"') END_TIME
+                                     ,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+                                 FROM 
+                                 	  PRODUCT
+                                 JOIN
+                                      AUCTION USING(PRODUCT_NO)
+                                 JOIN 
+                                 	  ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+                                WHERE 
+                                	  PRODUCT.DELETE_YN = 'N'
+                                  AND 
+                                  	  REF_ANO = 4
+                                  AND 
+                                      FILE_LEVEL = 1
+                                  AND
+                                  	  PRODUCT_TRADE_STATUS = '판매중'
+                           	    ORDER 
+                           	       BY 
+                           	       	  CREATE_DT DESC) A)
+		  WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="insertAuction">
+		INSERT
+		  INTO
+		  	   AUCTION
+	    VALUES
+	    	  (
+	    	   SEQ_AUC_NO.NEXTVAL
+	    	  ,SEQ_PRODUCT_NO.CURRVAL
+	    	  ,?
+	    	  ,?
+	    	  ,TO_DATE(?,'YYYY-MM-DDHH24:MI:SS')
+	    	  ,(TO_DATE(?,'YYYY-MM-DDHH24:MI:SS')+?)
+	    	  )
+	</entry>
+	
+	<entry key="selectAuction">
+		SELECT 
+			   A.PRODUCT_NO PRODUCT_NO
+			  ,P.MEM_NO MEM_NO
+			  ,NICKNAME
+			  ,PRODUCT_NAME
+			  ,PRODUCT_STATUS
+			  ,LOACATION
+			  ,PRODUCT_DESC
+			  ,PRODUCT_PRICE
+			  ,PRODUCT_DELV
+			  ,CREATE_DT
+			  ,VIEW_CNT
+			  ,CATE_NO
+			  ,AUCTION_NO
+			  ,PRICE_MIN
+			  ,PRICE_NOW
+			  ,START_TIME
+			  ,END_TIME
+			  ,CATE_NAME
+			  ,PRODUCT_TRADE_STATUS
+  		  FROM
+  		  	   AUCTION A
+   		  JOIN
+   		  	   PRODUCT P ON(A.PRODUCT_NO=P.PRODUCT_NO)
+   		  JOIN
+   		  	   MEMBER M ON(M.MEM_NO = P.MEM_NO)
+		  JOIN   
+		       PRODUCT_CATEGORY USING(CATE_NO)
+		 WHERE
+		       P.PRODUCT_NO = ?
+   		   AND
+   		 	   DELETE_YN = 'N'
+	</entry>
+	
+	<entry key="selectCountMember">
+		SELECT
+			   COUNT(MEM_NO) COUNT
+	 	  FROM(SELECT
+	 	  	   		  MEM_NO
+  				 FROM
+  				 	  AUC_RECODE
+ 				WHERE
+ 					  AUCTION_NO = ?
+ 				GROUP
+ 				   BY
+ 				   	  MEM_NO)
+	</entry>
+	
+	<entry key="selectAuctionModal">
+		SELECT 
+			   PRODUCT_NO
+			  ,PRICE_NOW
+			  ,((END_TIME - SYSDATE) * 24 * 60 * 60) END_TIME 
+  		  FROM 
+  		  	   AUCTION
+ 	  	 WHERE 
+ 	  	 	   AUCTION_NO = ?
+	</entry>
+	
+	<entry key="selectRecodeList">
+  		SELECT * 
+		  FROM(SELECT ROWNUM,A.*
+                 FROM(SELECT RECODE_NO
+                            ,AUCTION_NO
+                            ,MEM_NO
+                            ,NICKNAME
+                            ,RANK() OVER (PARTITION BY MEM_NO ORDER BY RECODE_NO) RANK
+                        FROM
+                             AUC_RECODE
+                        JOIN
+                             AUCTION USING (AUCTION_NO)
+                        JOIN
+                             MEMBER USING (MEM_NO)
+                       WHERE
+                             AUCTION_NO = ?
+                       ORDER BY RECODE_NO)A)
+ 		 ORDER BY ROWNUM DESC
+	</entry>
+	
+	<entry key="updatePriceNow">
+		 UPDATE
+		 	    AUCTION
+		    SET
+		        PRICE_NOW = ?
+		  WHERE
+		  	    AUCTION_NO = ?
+	</entry>
+	
+	<entry key="insertAuctionRecode">
+		INSERT
+		  INTO
+		  	   AUC_RECODE
+	    VALUES
+	    	  (
+	    	   SEQ_REC_NO.NEXTVAL
+	    	  ,?
+	    	  ,?
+	    	  )
+	</entry>
+	
+	<entry key="selectSuccessMember">
+		SELECT *
+		  FROM(SELECT
+		              ROWNUM
+		             ,A.MEM_NO
+		         FROM(SELECT
+		                     AUC_RECODE.MEM_NO
+		                FROM
+		                     PRODUCT
+		                JOIN
+		                     AUCTION USING (PRODUCT_NO)
+		                JOIN
+		                     AUC_RECODE USING (AUCTION_NO)
+		               WHERE
+		                     AUCTION_NO = ?
+		               ORDER
+		                  BY
+		                     RECODE_NO DESC)A)
+		 WHERE ROWNUM = 1
+	</entry>
+	
+	<entry key="checkTransAction">
+		SELECT 
+			   COUNT(SALE_NO) COUNT
+		  FROM
+		  	   TRANS_ACTION
+		 WHERE
+		 	   MEM_NO = ?
+		   AND
+		   	   PRODUCT_NO = ?
+	</entry>
+	
+	<entry key="updateTradeStatus">
+		UPDATE
+			   PRODUCT
+		   SET	
+		   	   PRODUCT_TRADE_STATUS = '판매완료'
+		 WHERE
+		 	   PRODUCT_NO = ?
+	</entry>
+	
+	<entry key="insertTransAction">
+		INSERT
+		  INTO
+		  	   TRANS_ACTION
+		VALUES
+			   (
+			   SEQ_SALE_NO.NEXTVAL
+			  ,?
+			  ,?
+			   )
+	</entry>
+	
+	<entry key="searchTitle">
+		SELECT * 
+		  FROM(
+			   SELECT ROWNUM RNUM, a.* 
+				FROM(
+					SELECT
+						PRODUCT_NO
+						,PRODUCT_NAME
+						,PRODUCT_PRICE
+						,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+	                   	,CREATE_DT
+	                   	,PRICE_NOW
+	                   	,TO_CHAR(END_TIME, 'MM"월"DD"일" HH"시"MI"분"') END_TIME
+					FROM PRODUCT
+					JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+					JOIN AUCTION USING (PRODUCT_NO)
+					WHERE PRODUCT.DELETE_YN = 'N'
+					AND FILE_LEVEL=1
+					AND PRODUCT_TRADE_STATUS = '판매중'
+					AND PRODUCT_NAME LIKE '%'||?||'%'
+					ORDER BY CREATE_DT DESC) A)
+		WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="searchMemId">
+		SELECT * 
+		FROM(
+			SELECT ROWNUM RNUM, a.* 
+			FROM(
+				SELECT
+					PRODUCT_NO
+					,PRODUCT_NAME
+					,PRODUCT_PRICE
+					,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+					,CREATE_DT
+		           	,PRICE_NOW
+		           	,TO_CHAR(END_TIME, 'MM"월"DD"일" HH"시"MI"분"') END_TIME
+				FROM PRODUCT
+				JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+				JOIN AUCTION USING (PRODUCT_NO)
+				JOIN MEMBER USING(MEM_NO)
+				WHERE PRODUCT.DELETE_YN = 'N'
+				AND FILE_LEVEL=1
+				AND PRODUCT_TRADE_STATUS = '판매중'
+				AND MEM_ID LIKE '%'||?||'%'
+				ORDER BY CREATE_DT DESC) A)
+		WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="searchAll">
+		SELECT * 
+		 FROM(
+			  SELECT ROWNUM RNUM, a.* 
+				FROM(
+					SELECT
+							PRODUCT_NO
+							,PRODUCT_NAME
+							,PRODUCT_PRICE
+							,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+							,CREATE_DT
+				           	,PRICE_NOW
+				           	,TO_CHAR(END_TIME, 'MM"월"DD"일" HH"시"MI"분"') END_TIME
+					FROM PRODUCT
+					JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+					JOIN AUCTION USING (PRODUCT_NO)
+					JOIN MEMBER USING(MEM_NO)
+					WHERE PRODUCT.DELETE_YN = 'N'
+					AND FILE_LEVEL=1
+					AND PRODUCT_TRADE_STATUS = '판매중'
+					AND (MEM_ID LIKE '%'||?||'%' OR PRODUCT_NAME LIKE '%'||?||'%')
+					ORDER BY CREATE_DT DESC) A)
+		WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+</properties>

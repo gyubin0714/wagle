@@ -1,0 +1,15 @@
+package com.kh.common.model.vo;
+
+import java.util.Date;
+
+public class Attachment {
+	
+	private int fileNo; //FILE_NO	NUMBER
+	private int refAno; //REF_ANO	NUMBER
+	private int refBno; //REF_BNO	NUMBER
+	private String originName; //ORIGIN_NAME	VARCHAR2(255 BYTE)
+	private String changeName; //CHANGE_NAME	VARCHAR2(255 BYTE)
+	private String filePath; //FILE_PATH	VARCHAR2(1000 BYTE)
+	private Date updateDate; //UPDATE_DATE	DATE
+	private int fileLevel; //FILE_LEVEL	NUMBER
+}

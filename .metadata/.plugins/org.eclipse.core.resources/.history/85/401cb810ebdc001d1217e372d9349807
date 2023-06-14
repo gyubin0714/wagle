@@ -1,0 +1,61 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<title>메뉴바</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    #head-area{
+      float: right;
+    }
+
+    #mainlogo{
+      float: left;
+    }
+  </style>
+
+
+  </head>
+  <body>
+
+    <img src="C:\web-workspace2\WAGLE\WebContent\resources\wagle.png" alt="와글와글메인로고" id="mainlogo" width="200" height="200">
+
+    <div id="search" align="center">
+
+    
+    <input type="text" style="border-radius: 25px; width: 400px; height:50px">
+    <a href="" style="border-radius: 25px;  border-width:1px; border-style: solid;  border-color: rgb(204, 204, 204);
+     box-shadow: rgba(0, 0, 0, 0.067) 0px 1px 1px 0px inset; background-color: rgb(237, 237, 237);">
+     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32.24800109863281" height="32.24800109863281" viewBox="0 0 32.24800109863281 32.24800109863281" fill="rgb(166, 166, 166)" data-svg-content="true" preserveAspectRatio="none"><g><path d="M 19,0C 11.82,0, 6,5.82, 6,13c0,3.090, 1.084,5.926, 2.884,8.158l-8.592,8.592c-0.54,0.54-0.54,1.418,0,1.958 c 0.54,0.54, 1.418,0.54, 1.958,0l 8.592-8.592C 13.074,24.916, 15.91,26, 19,26c 7.18,0, 13-5.82, 13-13S 26.18,0, 19,0z M 19,24 C 12.934,24, 8,19.066, 8,13S 12.934,2, 19,2S 30,6.934, 30,13S 25.066,24, 19,24z"></path></g></svg></a>
+    
+    </div>
+
+    <div id="head-area">
+         <a href="#" style="color:black;">로그인</a> |
+         <a href="#" style="color:black;">회원가입</a> |
+         <a href="#" style="color:black;">고객센터</a>
+    </div>
+
+    <br><br>
+
+    <br clear="both">
+
+    <div class="nav1-area" align="center">
+      <div class="menu"><a href="#">중고거래 |</a></div>
+      <div class="menu"><a href="#">경매 |</a></div>
+      <div class="menu"><a href="#">물물교환/무료나눔 |</a></div> 
+      <div class="menu"><a href="#">커뮤니티</a></div>
+    </div>
+
+    <hr>
+    
+  </body>
+</html>

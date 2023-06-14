@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="selectNew">
+SELECT *
+  FROM(SELECT ROWNUM, A.*
+             FROM(SELECT PRODUCT_NO
+        		     ,PRODUCT_NAME
+       		     ,PRODUCT_PRICE
+        		     ,METHOD
+       		     ,CREATE_DT
+        		     ,VIEW_CNT
+        		     ,NVL(COUNT,0) COUNT
+         		     ,TO_CHAR(END_TIME, 'MM"월"DD"일" HH"시"MI"분"') END_TIME
+         		     ,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+  	         FROM (SELECT COUNT(PRODUCT_NO) COUNT, PRODUCT_NO
+         		       FROM INTEREST
+        		     GROUP BY PRODUCT_NO)
+ 	        RIGHT JOIN PRODUCT USING(PRODUCT_NO)
+ 	         LEFT JOIN AUCTION USING (PRODUCT_NO)
+ 	         JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+ 	       ORDER BY CREATE_DT DESC) A)
+WHERE ROWNUM BETWEEN 1 AND 4
+
+</entry>
+
+<entry key="selectBest">
+SELECT *
+  FROM(SELECT ROWNUM, A.*
+             FROM(SELECT PRODUCT_NO,PRODUCT_NAME
+      ,PRODUCT_PRICE
+      ,METHOD
+      ,CREATE_DT
+      ,VIEW_CNT
+      ,NVL(COUNT,0) COUNT
+      ,TO_CHAR(END_TIME, 'MM"월"DD"일" HH"시"MI"분"') END_TIME
+      ,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+  FROM (SELECT COUNT(PRODUCT_NO) COUNT, PRODUCT_NO
+          FROM INTEREST
+         GROUP BY PRODUCT_NO)
+ RIGHT JOIN PRODUCT USING(PRODUCT_NO)
+  LEFT JOIN AUCTION USING (PRODUCT_NO)
+  JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+ ORDER BY (VIEW_CNT + COUNT * 15) DESC) A)
+WHERE ROWNUM BETWEEN 1 AND 4
+
+</entry>
+
+<entry key="selectAuction">
+SELECT *
+  FROM(SELECT ROWNUM, A.*
+             FROM(SELECT PRODUCT_NO,PRODUCT_NAME
+      ,PRODUCT_PRICE
+      ,METHOD
+      ,CREATE_DT
+      ,VIEW_CNT
+      ,NVL(COUNT,0) COUNT
+      ,TO_CHAR(END_TIME, 'MM"월"DD"일" HH"시"MI"분"') END_TIME
+      ,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+  FROM (SELECT COUNT(PRODUCT_NO) COUNT, PRODUCT_NO
+          FROM INTEREST
+         GROUP BY PRODUCT_NO)
+ RIGHT JOIN PRODUCT USING(PRODUCT_NO)
+  JOIN AUCTION USING (PRODUCT_NO)
+  JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+ ORDER BY (AUCTION.END_TIME-SYSDATE) DESC) A)
+WHERE ROWNUM BETWEEN 1 AND 4
+
+</entry>
+</properties>

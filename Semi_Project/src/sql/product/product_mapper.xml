@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="selectListCount">
+		SELECT
+				COUNT(*)
+		  FROM
+		  		PRODUCT
+		 WHERE
+		 		DELETE_YN='N'
+	</entry>
+	
+	<entry key="insertProduct">
+		INSERT
+		  INTO
+		  		PRODUCT
+		  		(
+		  		PRODUCT_NO,
+		  		MEM_NO,
+		  		PRODUCT_NAME,
+		  		LOACATION,
+		  		PRODUCT_STATUS,
+		  		PRODUCT_DESC,
+		  		PRODUCT_PRICE, 
+		  		PRODUCT_DELV,
+		  		CATE_NO
+		  		,METHOD
+		  		)
+		  VALUES
+		  		(
+		  		SEQ_PRODUCT_NO.NEXTVAL
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		)
+	</entry>
+	
+	<entry key="insertAttachment">
+		INSERT
+		  INTO
+		  		ATTACHMENT
+		  		(
+		  		FILE_NO
+		  		,REF_ANO
+		  		,REF_BNO
+		  		,ORIGIN_NAME
+		  		,CHANGE_NAME
+		  		,FILE_PATH
+		  		,FILE_LEVEL
+		  		)
+		  VALUES
+		  		(
+		  		SEQ_FILE_NO.NEXTVAL
+		  		,4
+		  		,SEQ_PRODUCT_NO.CURRVAL
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		)
+		  		
+	
+	
+	</entry>
+	
+	<entry key="selectCategoryList">
+		SELECT
+				CATE_NO, CATE_NAME, CATE_PARENT
+		  FROM
+		  		PRODUCT_CATEGORY
+	
+	</entry>
+	
+	<entry key="selectProductList">
+
+	SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+			AND FILE_LEVEL=1
+			AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN 0 AND ?
+
+	</entry>
+	
+	<entry key="moreProductList">
+
+	SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+			AND FILE_LEVEL=1
+			AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN ? AND ?
+
+	</entry>
+	
+	<entry key="increaseCount">
+		UPDATE
+				PRODUCT
+		   SET
+				VIEW_CNT = VIEW_CNT + 1
+		 WHERE
+				PRODUCT_NO = ?		
+		   AND
+		   		DELETE_YN = 'N'
+	
+	</entry>
+	
+	<entry key="selectProduct">
+		SELECT 
+		        PRODUCT_NO,
+		        PRODUCT_NAME,
+		        PRODUCT_PRICE, 
+		        CREATE_DT, 
+		        VIEW_CNT,
+		        PRODUCT_STATUS,
+		        PRODUCT_DELV,
+		        LOACATION,
+		        PRODUCT_DESC,
+		        NICKNAME,
+		        CATE_NAME,
+                CATE_NO,
+                CATE_PARENT,
+		        METHOD,
+		        MEM_NO
+		FROM
+		        PRODUCT
+		JOIN
+		        MEMBER USING(MEM_NO)
+		JOIN   
+		        PRODUCT_CATEGORY USING(CATE_NO)
+		WHERE
+		        PRODUCT.PRODUCT_NO = ?
+		  AND
+		        PRODUCT.DELETE_YN = 'N'
+		  AND 
+		  		PRODUCT_TRADE_STATUS='판매중'
+	</entry>
+
+	<entry key="selectAttachment">
+		SELECT 
+				FILE_NO
+				, ORIGIN_NAME
+				,CHANGE_NAME
+				,FILE_PATH
+		  FROM
+		  		ATTACHMENT
+		 WHERE
+		 		REF_ANO = 4
+		   AND
+		 		REF_BNO = ?
+	
+	
+	</entry>
+	
+	<entry key="updateProduct">
+		UPDATE
+				PRODUCT
+		   SET
+		   		PRODUCT_NAME=?
+		   		,LOACATION=?
+		   		,PRODUCT_STATUS=?
+		   		,PRODUCT_DESC=?
+		   		,PRODUCT_PRICE=?
+		   		,PRODUCT_DELV=?
+		   		,CATE_NO=?
+		   		,METHOD=?
+		 WHERE
+		 		PRODUCT_NO=?
+
+	</entry>
+	
+	<entry key="updateAttachment">
+			UPDATE
+					ATTACHMENT
+			   SET
+					ORIGIN_NAME=?
+					,CHANGE_NAME=?
+					,FILE_PATH=?
+					,UPDATE_DATE=SYSDATE
+			WHERE
+					FILE_NO=?
+	</entry>
+	
+		<entry key="insertNewAttachment">
+		INSERT
+		  INTO
+		  		ATTACHMENT
+		  		(
+		  		FILE_NO
+		  		,REF_ANO
+		  		,REF_BNO
+		  		,ORIGIN_NAME
+		  		,CHANGE_NAME
+		  		,FILE_PATH
+		  		,FILE_LEVEL
+		  		)
+		  VALUES
+		  		(
+		  		SEQ_FILE_NO.NEXTVAL
+		  		,4
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		,?
+		  		)
+	</entry>
+	
+	<entry key="deleteProduct">
+		UPDATE
+				PRODUCT
+		   SET
+		   		DELETE_YN='Y'
+		 WHERE
+		 		PRODUCT_NO=?		
+	</entry>
+	
+	<entry key="selectInterest">
+		SELECT
+				PRODUCT_NO
+				,MEM_NO
+		  FROM
+		  		INTEREST
+		 WHERE
+		 		PRODUCT_NO=?
+		   AND 
+		   		MEM_NO=?
+	</entry>
+	
+	<entry key="deleteInterest">
+		DELETE
+		  FROM
+		  		INTEREST
+		 WHERE
+		 		PRODUCT_NO=?
+		   AND 
+		   		MEM_NO=?
+	</entry>
+	
+	<entry key="insertInterest">
+		INSERT
+		 INTO
+		 		INTEREST
+		 VALUES
+		 		(
+		 		?
+		 		,?
+		 		)
+	</entry>
+	
+	<entry key="interestCount">
+		SELECT
+				COUNT(*)
+		  FROM
+		  		INTEREST
+		 WHERE
+		 		PRODUCT_NO=?
+	
+	</entry>
+	
+	<entry key = "selectCategorySecond">
+		SELECT 
+				CATE_NO
+				,CATE_NAME
+				,CATE_PARENT
+		  FROM 
+		  		PRODUCT_CATEGORY
+		  WHERE 
+		  		CATE_PARENT=?
+		  ORDER
+		  	 BY
+		  	 	CATE_NO
+	</entry>
+	
+	
+	<entry key="selectMember">
+	SELECT 
+		MEM_ID
+       ,NICKNAME
+       ,ENROLL_DATE 
+  	FROM
+       MEMBER
+  	WHERE
+       MEM_NO = ?
+	</entry>
+	
+	<entry key="selectSaleProduct">
+	SELECT
+     		PRODUCT_NO, PRODUCT_NAME, PRODUCT_STATUS,CREATE_DT
+	FROM
+    	PRODUCT
+	JOIN 
+    	MEMBER USING(MEM_NO)
+	WHERE 
+    	MEM_NO=?
+    AND 
+    	DELETE_YN='N'
+    AND 
+    	PRODUCT_NO != ?
+    AND 
+    	PRODUCT_TRADE_STATUS='판매중'
+	AND 
+		METHOD='P'
+    ORDER BY CREATE_DT DESC
+	
+	</entry>
+	
+	<entry key="selectUserProfile">
+		SELECT 
+				FILE_NO
+				, ORIGIN_NAME
+				,CHANGE_NAME
+				,FILE_PATH
+		  FROM
+		  		ATTACHMENT
+		 WHERE
+		 		REF_ANO = 1
+		   AND
+		 		REF_BNO = ?
+	
+	</entry>
+	
+	<entry key="selectMember">
+		SELECT
+				MEM_ID
+				,NICKNAME
+				,ENROLL_DATE
+		  FROM
+		  		MEMBER
+		  WHERE
+		  		MEM_NO=?
+		
+	
+	</entry>
+	
+	<entry key="selectSaleAttachment">
+			SELECT 
+				FILE_NO
+				, ORIGIN_NAME
+				,CHANGE_NAME
+				,FILE_PATH
+                , PRODUCT_NO
+		  FROM
+		  		ATTACHMENT
+          JOIN
+                PRODUCT ON(PRODUCT.PRODUCT_NO = ATTACHMENT.REF_BNO)
+		 WHERE
+		 		REF_ANO = 4
+           AND 
+                MEM_NO=?
+           AND 
+           		PRODUCT_NO=?
+           AND 
+           		METHOD='P'
+           AND 
+           		PRODUCT_TRADE_STATUS='판매중'
+           
+           
+	</entry>
+	
+	<entry key="searchTitle">
+	SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+			AND FILE_LEVEL=1
+			AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND PRODUCT_NAME LIKE '%'||?||'%'
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN 0 AND ?
+	</entry>
+	
+	<entry key="searchMemId">
+	SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			JOIN MEMBER USING(MEM_NO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+			AND FILE_LEVEL=1
+			AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND MEM_ID LIKE '%'||?||'%'
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN 0 AND ?
+	</entry>
+	
+	<entry key="searchAll">
+		SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			JOIN MEMBER USING(MEM_NO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+            AND FILE_LEVEL=1
+            AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND (MEM_ID LIKE '%'||?||'%' OR PRODUCT_NAME LIKE '%'||?||'%')
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN 0 AND ?
+
+	</entry>
+	
+		<entry key="moreSearchTitle">
+	SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+			AND FILE_LEVEL=1
+			AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND PRODUCT_NAME LIKE '%'||?||'%'
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="moreSearchMemId">
+	SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			JOIN MEMBER USING(MEM_NO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+			AND FILE_LEVEL=1
+			AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND MEM_ID LIKE '%'||?||'%'
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="moreSearchAll">
+			SELECT * 
+	FROM(
+		SELECT ROWNUM RNUM, a.* 
+		FROM(
+			SELECT
+			PRODUCT_NO
+			,PRODUCT_NAME
+			,PRODUCT_PRICE
+			,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			JOIN MEMBER USING(MEM_NO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+            AND FILE_LEVEL=1
+            AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND (MEM_ID LIKE '%'||?||'%' OR PRODUCT_NAME LIKE '%'||?||'%')
+			ORDER BY CREATE_DT DESC) A)
+	WHERE RNUM BETWEEN ? AND ?
+	
+	</entry>
+	
+	
+		<entry key="searchTitleCount">
+		SELECT
+			COUNT(*)
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			JOIN MEMBER USING(MEM_NO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+            AND FILE_LEVEL=1
+            AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND PRODUCT_NAME LIKE '%'||?||'%'
+			ORDER BY CREATE_DT DESC
+	</entry>
+	
+			<entry key="searchMemIdCount">
+		SELECT
+			COUNT(*)
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			JOIN MEMBER USING(MEM_NO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+            AND FILE_LEVEL=1
+            AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND MEM_ID LIKE '%'||?||'%'
+			ORDER BY CREATE_DT DESC
+	</entry>
+	
+	<entry key="searchAllCount">
+	SELECT
+			COUNT(*)
+			FROM PRODUCT
+			JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+			JOIN MEMBER USING(MEM_NO)
+			WHERE PRODUCT.DELETE_YN = 'N'
+            AND FILE_LEVEL=1
+            AND PRODUCT_TRADE_STATUS='판매중'
+			AND METHOD='P'
+			AND REF_ANO=4
+			AND (MEM_ID LIKE '%'||?||'%' OR PRODUCT_NAME LIKE '%'||?||'%')
+			ORDER BY CREATE_DT DESC
+	</entry>
+	
+	
+	
+</properties>

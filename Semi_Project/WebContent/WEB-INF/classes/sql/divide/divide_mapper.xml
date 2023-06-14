@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+		<entry key="insertDivideBoard">
+					INSERT
+					INTO
+						DIVIDE
+						(
+						D_NO
+						,D_TITLE
+		                ,D_LOCATION
+		                ,CATE_NO
+		                ,DIVIDE_KIND
+						,D_CONTENT
+						,MEM_NO
+						)
+					VALUES
+						(
+						SEQ_DIVIDE_NO.NEXTVAL
+						,?
+		                ,?
+		                ,?
+		                ,?
+						,?
+						,?
+						)
+		</entry>
+		<entry key="updateDivideBoard">
+					UPDATE
+							DIVIDE
+					SET
+						D_TITLE = ?
+						,D_LOCATION = ?
+						,CATE_NO = ?
+						,D_CONTENT = ?
+					WHERE
+						D_NO = ?			
+		
+		</entry>
+		<entry key="insertAttachmentList">
+					INSERT
+				  INTO
+				  		ATTACHMENT
+				  		(
+				  		FILE_NO
+				  		,REF_ANO
+				  		,REF_BNO
+				  		,ORIGIN_NAME
+				  		,CHANGE_NAME
+				  		,FILE_PATH
+				  		,FILE_LEVEL
+				  		)
+				  VALUES
+				  		(
+				  		SEQ_FILE_NO.NEXTVAL
+				  		,5
+				  		,SEQ_DIVIDE_NO.CURRVAL
+				  		,?
+				  		,?
+				  		,?
+				  		,?
+				  		)	
+		</entry>
+				<entry key="insertNewAttachmentList">
+					INSERT
+				  INTO
+				  		ATTACHMENT
+				  		(
+				  		FILE_NO
+				  		,REF_ANO
+				  		,REF_BNO
+				  		,ORIGIN_NAME
+				  		,CHANGE_NAME
+				  		,FILE_PATH
+				  		,FILE_LEVEL
+				  		)
+				  VALUES
+				  		(
+				  		SEQ_FILE_NO.NEXTVAL
+				  		,5
+				  		,?
+				  		,?
+				  		,?
+				  		,?
+				  		,?
+				  		)	
+		</entry>
+		<entry key="updateAttachment">
+					UPDATE
+							ATTACHMENT
+					SET
+							ORIGIN_NAME=?
+					  		,CHANGE_NAME=?
+					  		,FILE_PATH=?
+					  		,FILE_LEVEL=?
+					WHERE
+							FILE_NO=?
+		</entry>
+		<entry key="selectCategoryList">
+		SELECT
+				CATE_NO
+				,CATE_NAME
+			FROM
+				PRODUCT_CATEGORY
+		</entry>
+		<entry key="increaseCount">
+		UPDATE
+				DIVIDE
+			SET
+				D_COUNT = D_COUNT+1
+		WHERE
+				D_NO = ?
+			AND
+				D_DELETE_YN = 'Y'
+		</entry>
+		<entry key="selectBoard">
+		SELECT
+				D_NO
+				,CATE_NAME
+				,D_TITLE
+				,D_CONTENT
+				,DIVIDE_KIND
+				,MEM_ID
+				,D_REG_DATE
+				,D_LOCATION
+			FROM
+				DIVIDE
+			LEFT	
+			JOIN
+				PRODUCT_CATEGORY USING(CATE_NO)
+			JOIN
+				MEMBER USING(MEM_NO)
+			WHERE
+				D_NO = ?
+			AND
+				D_DELETE_YN = 'Y'					
+	</entry>
+	<entry key="selectAttachment">
+		SELECT
+				FILE_NO
+				,ORIGIN_NAME
+				,CHANGE_NAME
+				,FILE_PATH
+			FROM
+				ATTACHMENT
+			WHERE
+				REF_BNO = ?
+			AND
+                REF_ANO = 5				
+	</entry>
+	<entry key="deleteDivide">
+		UPDATE
+				DIVIDE
+		SET
+				D_DELETE_YN = 'N'
+		WHERE
+				D_NO = ?				
+	</entry>
+		<entry key="selectReplyList">
+			SELECT 
+		        COMMENT_NO
+		        ,MEM_ID
+		        ,D_CONTENT
+		        ,TO_CHAR(CREATE_DATE, 'YY/MM/DD HH:MI:SS') CREATE_DATE
+		FROM 
+		       DIVIDE_COMMENT
+		JOIN
+		        MEMBER USING(MEM_NO)
+		WHERE
+		        D_NO = ?
+		     AND
+		        DIVIDE_COMMENT.STATUS = 'Y'
+		ORDER
+		BY
+		        CREATE_DATE
+	</entry>
+	<entry key="insertReply">
+			INSERT
+			INTO	
+					DIVIDE_COMMENT
+					(
+					COMMENT_NO
+					,D_CONTENT
+					,D_NO
+					,MEM_NO
+					)
+			VALUES
+					(
+					SEQ_DIVIDE_COMMENT_NO.NEXTVAL
+					,?
+					,?
+					,?
+					)		
+	</entry>
+	
+	<entry key="selectListCount">
+		SELECT
+				COUNT(*)
+		FROM	
+				DIVIDE
+		WHERE
+				D_DELETE_YN = 'Y'				
+	</entry>
+		<entry key="selectList">
+	SELECT * 
+	FROM(SELECT
+				ROWNUM RNUM,
+				A.*
+			FROM(SELECT
+						D_NO
+						,D_TITLE
+						,D_COUNT
+						,DIVIDE_KIND
+						,FILE_PATH||'/'||CHANGE_NAME TITLEIMG
+					FROM
+						DIVIDE
+					JOIN
+						ATTACHMENT ON (D_NO = REF_BNO)
+					WHERE
+						D_DELETE_YN = 'Y'
+					AND
+						REF_ANO = 5	
+					AND
+						FILE_LEVEL = 1	
+					ORDER
+						BY
+						 D_NO DESC) A)
+	WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	<entry key="auctionBoard">
+		SELECT
+				D_TITLE
+				,MEM_ID
+			FROM
+				DIVIDE
+			JOIN
+				MEMBER USING(MEM_NO)
+			WHERE
+				D_NO = ?		
+	</entry>
+	<entry key="purchaseBoard">
+		SELECT
+				PRODUCT_NO
+				,PRODUCT_NAME
+				,MEM_ID
+				,PRODUCT_PRICE
+			FROM
+				PRODUCT 
+			JOIN
+				MEMBER USING(MEM_NO)
+			WHERE
+				PRODUCT_NO = ?		
+	</entry>
+</properties>

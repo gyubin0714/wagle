@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="insertReview">
+		INSERT
+		  INTO
+		  		REVIEW
+		  		(
+		  		REVIEW_NO
+				,MEM_NO
+				,PRODUCT_NO
+				,CONTETNT
+				,CREATE_DATE
+				,DELETE_YN
+		  		)
+		  VALUES
+		  		(
+		  		SEQ_REVIEW_NO.NEXTVAL
+		  		,?
+		  		,?
+		  		,?
+		  		,SYSDATE
+		  		,DEFAULT
+		  		)
+	</entry>
+
+</properties>

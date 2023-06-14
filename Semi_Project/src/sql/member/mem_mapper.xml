@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="loginMember">
+SELECT
+       MEM_NO
+       ,MEM_ID
+       ,MEM_PWD
+       ,PWD_Q
+       ,PWD_A
+       ,MEM_NAME
+       ,NICKNAME
+       ,EMAIL
+       ,ADDRESS
+       ,PAY_ACCOUNT
+       ,ENROLL_DATE
+       ,MEM_STATUS
+   FROM
+        MEMBER
+   WHERE
+        MEM_ID = ?
+    AND
+        MEM_PWD = ?
+    AND 
+       MEM_STATUS = 'Y'
+
+</entry>
+<entry key="insertMember">
+INSERT
+ INTO 
+      MEMBER
+      (
+      MEM_NO,
+      MEM_ID,
+      MEM_PWD,
+      PWD_A,
+      MEM_NAME,
+      NICKNAME,
+      EMAIL,
+      ADDRESS,
+      PAY_ACCOUNT,
+      PWD_Q
+ 
+      )
+VALUES
+       (
+       SEQ_MEM_NO.NEXTVAL
+       ,?
+       ,?
+       ,?
+       ,?
+       ,?
+       ,?
+       ,?
+       ,?
+       ,?
+       )
+
+</entry>
+<entry key="insertAttachment">
+INSERT
+   INTO
+        ATTACHMENT
+        (
+        FILE_NO
+        ,REF_ANO
+        ,REF_BNO
+        ,ORIGIN_NAME
+        ,CHANGE_NAME
+        ,FILE_PATH
+        )
+ VALUES
+	  (
+	  SEQ_FILE_NO.NEXTVAL
+	  ,1
+	  ,SEQ_MEM_NO.CURRVAL
+	  ,?
+	  ,?
+	  ,?
+	  )
+
+</entry>
+<entry key="idCheck">
+SELECT
+        COUNT(*)
+ FROM
+        MEMBER
+  WHERE
+        MEM_ID = ?
+
+</entry>
+<entry key="nicknameCheck">
+SELECT
+        COUNT(*)
+ FROM
+        MEMBER
+  WHERE
+        NICKNAME = ?
+
+</entry>
+<entry key="idSearch">
+SELECT
+      MEM_NO
+       ,MEM_ID
+       ,MEM_PWD
+       ,PWD_Q
+       ,PWD_A
+       ,MEM_NAME
+       ,NICKNAME
+       ,EMAIL
+       ,ADDRESS
+       ,PAY_ACCOUNT
+       ,ENROLL_DATE
+       ,MEM_STATUS
+ FROM
+        MEMBER
+   WHERE
+        MEM_NAME = ?
+    AND
+        EMAIL = ?
+    AND 
+       MEM_STATUS = 'Y'
+
+</entry>
+<entry key="pwdSearch">
+SELECT
+      MEM_NO
+       ,MEM_ID
+       ,MEM_PWD
+       ,PWD_Q
+       ,PWD_A
+       ,MEM_NAME
+       ,NICKNAME
+       ,EMAIL
+       ,ADDRESS
+       ,PAY_ACCOUNT
+       ,ENROLL_DATE
+       ,MEM_STATUS      
+ FROM
+        MEMBER
+   WHERE
+        MEM_ID = ?  
+    AND
+        PWD_Q = ?
+    AND 
+        PWD_A = ?
+    AND
+       MEM_STATUS = 'Y'
+
+</entry>
+<entry key="followList">
+                        
+ SELECT NICKNAME, 
+        FOLLOWING, 
+        FILE_NO
+   FROM FOLLOWING F
+   JOIN MEMBER M ON (F.FOLLOWING = M.MEM_NO)
+   JOIN ATTACHMENT ON(FOLLOWING  = REF_BNO)
+  WHERE F.MEM_NO  = ?
+  
+</entry>
+<entry key="updateMember">
+UPDATE 
+       MEMBER
+   SET
+       ,MEM_ID = ?
+       ,MEM_PWD = ?
+       ,PWD_Q = ?
+       ,PWD_A = ?
+       ,MEM_NAME = ?
+       ,NICKNAME = ? 
+       ,ADDRESS = ? 
+       ,EMAIL = ?
+       ,PAY_ACCOUNT =  ?
+       ,MEM_NO = ?
+       
+   JOIN 
+       ATTACHMENT ON (REF_BNO = MEM_NO)
+ WHERE
+        MEM_NO = ? 
+   AND
+        MEM_STATUS = 'Y'      
+       
+       
+</entry>
+<entry key="selectMember">
+SELECT 
+       MEM_NO
+       ,MEM_ID
+       ,MEM_PWD
+       ,PWD_Q
+       ,PWD_A
+       ,MEM_NAME
+       ,NICKNAME
+       ,EMAIL
+       ,ADDRESS
+       ,PAY_ACCOUNT
+       ,ENROLL_DATE
+       ,MEM_STATUS
+       ,REF_BNO
+   
+  FROM
+       MEMBER
+  JOIN 
+       ATTACHMENT ON (REF_BNO = MEM_NO)
+  WHERE
+       REF_ANO = 1
+    AND
+        MEM_NO = ?
+
+</entry>
+<entry key="updateAttachment">
+UPDATE
+       ATTACHMENT
+  SET
+      ORIGIN_NAME = ?,
+      CHANGE_NAME = ?,
+      FILE_PATH = ?
+ WHERE
+      FILE_NO = ?
+</entry>
+
+
+<entry key="selectAttachment">
+SELECT
+       FILE_NO
+       ,ORIGIN_NAME
+       ,CHANGE_NAME
+       ,FILE_PATH
+  FROM
+        ATTACHMENT
+  JOIN 
+        MEMBER ON (REF_BNO = MEM_NO )
+  WHERE
+        REF_ANO = 1
+    AND 
+        MEM_NO = ?
+   
+
+
+</entry>
+<entry key="insertNewAttachment">
+INSERT
+  INTO
+         ATTACHMENT
+		      (
+			  	FILE_NO,
+			  	REF_BNO,
+			  	ORIGIN_NAME,
+			   CHANGE_NAME,
+			  	FILE_PATH
+			 )
+VALUES 
+			 (
+			 SEQ_FNO.NEXTVAL,
+			 ?,
+			 ?,
+			 ?,
+			 ?
+			)
+
+
+</entry>
+
+
+<entry key="selectMyBoard">
+SELECT  
+        BOARD_TITLE
+        , MEM_NO
+        , BOARD_DATE
+        , BOARD_HITS
+  FROM 
+        BOARD 
+  JOIN 
+        MEMBER USING (MEM_NO)
+WHERE 
+       MEM_NO = ?
+
+</entry>
+<entry key="selectMyInterest">
+SELECT PRODUCT_NO, 
+       PRODUCT_NAME, 
+       PRODUCT_PRICE,  
+       METHOD, 
+       CREATE_DT, 
+       FILE_NO 
+ FROM  PRODUCT
+ JOIN  ATTACHMENT ON (REF_BNO = PRODUCT_NO)
+ WHERE FILE_LEVEL = 1
+   AND
+       PRODUCT_NO IN (SELECT PRODUCT_NO
+                        FROM INTEREST
+                        WHERE MEM_NO = ?)
+
+</entry>
+<entry key="memberCheck">
+SELECT
+       NICKNAME
+ FROM
+        MEMBER
+  WHERE
+        NICKNAME = ?
+
+	
+</entry>
+<entry key="deleteInterest">
+DELETE 
+  FROM INTEREST
+ WHERE MEM_NO = ?
+  AND  PRODUCT_NO = ?
+
+</entry>
+
+<entry key="selectMyEnrollProduct">
+SELECT PRODUCT_NO, 
+       PRODUCT_NAME, 
+       PRODUCT_PRICE,  
+       METHOD, 
+       CREATE_DT, 
+       FILE_NO ,
+       PRODUCT_TRADE_STATUS
+ FROM  PRODUCT
+ JOIN  ATTACHMENT ON (REF_BNO = PRODUCT_NO)
+ WHERE FILE_LEVEL = 1
+   AND
+       MEM_NO = ?
+</entry>
+
+<entry key="selectMyDeal">
+SELECT PRODUCT_NO, 
+       PRODUCT_NAME, 
+       PRODUCT_PRICE,  
+       METHOD, 
+       CREATE_DT, 
+       FILE_NO 
+ FROM PRODUCT
+ JOIN ATTACHMENT ON (REF_BNO = PRODUCT_NO)
+ WHERE FILE_LEVEL = 1
+  AND
+      PRODUCT_NO IN (SELECT PRODUCT_NO
+                       FROM TRANS_ACTION
+                      WHERE MEM_NO = ? )
+
+
+</entry>
+<entry key="writableReview">
+ SELECT
+        PRODUCT_NO, 
+       PRODUCT_NAME, 
+       PRODUCT_PRICE, 
+        METHOD, 
+        CREATE_DT, 
+        FILE_NO 
+  FROM PRODUCT 
+  JOIN ATTACHMENT  ON (PRODUCT_NO = REF_BNO)
+  WHERE FILE_LEVEL = 1
+  AND PRODUCT_TRADE_STATUS = '판매완료'
+  AND MEM_NO = ? 
+</entry>
+<entry key="memberSearch">
+SELECT 
+       MEM_NO
+       ,MEM_ID
+       ,MEM_PWD
+       ,PWD_Q
+       ,PWD_A
+       ,MEM_NAME
+       ,NICKNAME
+       ,EMAIL
+       ,ADDRESS
+       ,PAY_ACCOUNT
+       ,ENROLL_DATE
+       ,MEM_STATUS
+  FROM MEMBER
+WHERE NICKNAME = ?
+   AND 
+       MEM_STATUS = 'Y'
+
+</entry>
+<entry key="selectProduct">
+SELECT 
+       FILE_NO,
+       PRODUCT_NAME, 
+       METHOD,
+       MEM_NO,
+       PRODUCT_NO
+       
+  FROM PRODUCT
+  JOIN ATTACHMENT ON (REF_BNO = PRODUCT_NO)
+  WHERE PRODUCT_NO = ?
+  AND FILE_LEVEL = 1
+  AND PRODUCT_TRADE_STATUS = '판매완료'
+
+</entry>
+<entry key="selectProductAttachment">
+SELECT
+      FILE_NO
+      , ORIGIN_NAME
+      , CHANGE_NAME
+      , FILE_PATH
+  FROM
+        ATTACHMENT
+   JOIN
+        PRODUCT ON (REF_BNO = PRODUCT_NO)
+  WHERE FILE_LEVEL =1
+    AND REF_BNO IN (SELECT PRODUCT_NO 
+                      FROM PRODUCT
+                      WHERE  PRODUCT_NO = ?)
+
+</entry>
+<entry key="insertReview">
+INSERT
+  INTO 
+        REVIEW
+          (
+           REVIEW_NO
+           ,MEM_NO
+           ,PRODUCT_NO
+           ,CONTETNT
+           )
+  VALUES
+          (
+         SEQ_REVIEW_NO.NEXTVAL
+         ,?
+         ,?
+         ,?
+         )
+</entry>
+<entry key="selectReviewList">
+SELECT FILE_NO , 
+       PRODUCT_NAME, 
+       METHOD, 
+       CONTETNT
+ FROM REVIEW R
+ JOIN PRODUCT USING (PRODUCT_NO)
+ JOIN ATTACHMENT ON (PRODUCT_NO = REF_BNO)
+ WHERE R.MEM_NO = ?
+ AND FILE_LEVEL = 1
+
+
+</entry>
+<entry key="deleteFollowing">
+DELETE 
+  FROM FOLLOWING
+ WHERE MEM_NO = ?
+  AND  FOLLOWING = ?
+
+</entry>
+
+	
+</properties>

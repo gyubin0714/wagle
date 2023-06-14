@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	 
+	 <entry key="selectMemberAdmin">
+	 SELECT
+            MEM_NO,
+            MEM_ID,
+            MEM_NAME,
+            ENROLL_DATE,
+            MEM_STATUS
+       FROM 
+            MEMBER
+      ORDER 
+      	 BY MEM_NO ASC
+	</entry>
+	
+	<entry key="deleteMemberAdmin">
+	UPDATE 
+	       MEMBER
+	   SET 
+	       MEM_STATUS = 'N'
+	 WHERE
+	       MEM_NO = ?
+	</entry>
+	
+	<entry key="recoverMemberAdmin">
+	UPDATE 
+	       MEMBER
+	   SET 
+	       MEM_STATUS = 'Y'
+	 WHERE
+	       MEM_NO = ?
+	</entry>
+	
+	<entry key="selectProductAdmin">
+	SELECT 
+	       PRODUCT_NO,
+           AUCTION_NO,
+	       PRODUCT_NAME,
+	       MEM_ID,
+	       MEM_NAME,
+	       PRODUCT_TRADE_STATUS,
+	       CREATE_DT,
+	       DELETE_YN
+	  FROM 
+	       PRODUCT
+	  JOIN
+	       MEMBER USING(MEM_NO)
+ LEFT JOIN 
+           AUCTION USING(PRODUCT_NO)
+     ORDER
+        BY 
+           PRODUCT_NO ASC
+	</entry>
+	
+	<entry key="deleteProductAdmin">
+	UPDATE 
+	       PRODUCT
+	   SET 
+	       DELETE_YN = 'Y'
+	 WHERE
+	       PRODUCT_NO = ?
+	</entry>
+	
+	<entry key="recoverProductAdmin">
+	UPDATE 
+	       PRODUCT
+	   SET 
+	       DELETE_YN = 'N'
+	 WHERE
+	       PRODUCT_NO = ?
+	</entry>
+	
+	<entry key="selectBoardAdmin">
+	SELECT
+	      BOARD_NO,
+	      BOARD_TITLE,
+	      BOARD_WRITING,
+	      BOARD_DATE,
+	      BOARD_DELETE_YN,
+	      MEM_ID,
+	      MEM_NAME
+	  FROM
+	      BOARD
+	  JOIN
+	      MEMBER USING(MEM_NO)
+	 ORDER
+	    BY
+	       BOARD_NO ASC
+	</entry>
+	
+	<entry key="deleteBoard">
+	UPDATE
+		   BOARD
+	   SET
+	       BOARD_DELETE_YN = 'Y'
+	 WHERE
+	       BOARD_NO = ?
+	
+	</entry>
+	
+	<entry key="recoverBoard">
+	UPDATE
+		   BOARD
+	   SET
+	       BOARD_DELETE_YN = 'N'
+	 WHERE
+	       BOARD_NO = ?
+	
+	</entry>
+	
+	
+</properties>

@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="selectNoticeBoard">
+	
+	SELECT 
+		   NOTICE_NO, 
+		   TITLE, 
+		   CONTENT, 
+		   WRITE_DATE, 
+		   CS_CATEGORY_NO, 
+		   COUNT 
+      FROM
+           (SELECT NOTICE_NO, 
+                   TITLE, 
+                   CONTENT, 
+                   WRITE_DATE, 
+                   CS_CATEGORY_NO, 
+                   COUNT 
+              FROM 
+                   NOTICE 
+             WHERE 
+                   DELETE_YN = 'N' 
+               AND 
+                   CS_CATEGORY_NO = 4 
+          ORDER BY 
+                   WRITE_DATE DESC) 
+             WHERE 
+                   ROWNUM <![CDATA[<=]]> 9
+	</entry>
+	
+	<entry key="selectBestBoard">
+		
+	SELECT 
+           BOARD_NO, 
+           BOARD_TITLE, 
+           BOARD_WRITING, 
+           BOARD_DATE, 
+           BOARD_HITS, 
+           BOARD_NAME, 
+           NICKNAME
+      FROM(
+           SELECT BOARD_NO, 
+           BOARD_TITLE, 
+           BOARD_WRITING, 
+           BOARD_DATE, 
+           BOARD_HITS, 
+           BOARD_NAME, 
+           NICKNAME 
+      FROM 
+           BOARD 
+ LEFT JOIN 
+           BOARD_CATEGORY USING(CATEGORY_NO) 
+      JOIN 
+           MEMBER USING(MEM_NO) 
+     WHERE 
+           BOARD_DELETE_YN = 'Y' 
+  ORDER BY 
+           BOARD_HITS DESC) 
+     WHERE 
+           ROWNUM <![CDATA[<=]]> 9
+		
+	</entry>
+	
+	<entry key="selectAllBoard">
+    SELECT 
+           BOARD_NO, 
+           BOARD_TITLE, 
+           BOARD_WRITING, 
+           BOARD_DATE, 
+           BOARD_HITS, 
+           BOARD_NAME, 
+           NICKNAME
+      FROM(
+           SELECT BOARD_NO, 
+           BOARD_TITLE, 
+           BOARD_WRITING, 
+           BOARD_DATE, 
+           BOARD_HITS, 
+           BOARD_NAME, 
+           NICKNAME 
+      FROM 
+           BOARD 
+ LEFT JOIN 
+           BOARD_CATEGORY USING(CATEGORY_NO) 
+      JOIN 
+           MEMBER USING(MEM_NO) 
+     WHERE 
+           BOARD_DELETE_YN = 'Y' ORDER BY BOARD_DATE DESC) 
+     WHERE 
+           ROWNUM <![CDATA[<=]]> 10
+	</entry>
+	
+	<entry key="selectFreeBoard">
+	SELECT 
+	       BOARD_NO, 
+	       BOARD_TITLE, 
+	       BOARD_WRITING, 
+	       BOARD_DATE, 
+	       BOARD_HITS, 
+	       BOARD_NAME, 
+	       NICKNAME
+      FROM
+           (SELECT BOARD_NO, 
+                   BOARD_TITLE, 
+                   BOARD_WRITING, 
+                   BOARD_DATE, 
+                   BOARD_HITS, 
+                   BOARD_NAME, 
+                   NICKNAME 
+              FROM 
+                   BOARD 
+         LEFT JOIN 
+                   BOARD_CATEGORY USING(CATEGORY_NO) 
+              JOIN 
+                   MEMBER USING(MEM_NO) 
+             WHERE 
+                   CATEGORY_NO = 3 
+               AND 
+                   BOARD_DELETE_YN = 'Y' 
+          ORDER BY 
+                   BOARD_DATE DESC) 
+             WHERE 
+                   ROWNUM <![CDATA[<=]]> 10
+	</entry>
+	
+	<entry key="selectContentBoard">
+			SELECT 
+			       BOARD_NO, 
+			       BOARD_TITLE, 
+			       BOARD_WRITING, 
+			       BOARD_DATE, 
+			       BOARD_HITS, 
+			       BOARD_NAME, 
+			       NICKNAME,
+			       MEM_NO 
+			  FROM 
+			       BOARD 
+		 LEFT JOIN 
+			       BOARD_CATEGORY USING(CATEGORY_NO) 
+			  JOIN 
+			       MEMBER USING(MEM_NO) 
+	         WHERE 
+	               BOARD_NO = ?
+	</entry>
+	
+	<entry key="selectListCount">
+	        SELECT 
+	         COUNT(*) 
+	          FROM BOARD 
+	    	  LEFT JOIN 
+			       BOARD_CATEGORY 
+	         USING(CATEGORY_NO) 
+	         WHERE BOARD_DELETE_YN = 'Y'
+	</entry>
+	
+	<entry key="selectList">
+		SELECT * FROM (      
+        SELECT ROWNUM RNUM, A.* FROM (
+                    SELECT 
+                           BOARD_NO, 
+                           BOARD_TITLE, 
+                           BOARD_WRITING, 
+                           BOARD_DATE, 
+                           BOARD_HITS, 
+                           BOARD_NAME, 
+                           NICKNAME 
+                      FROM 
+                           BOARD 
+                 LEFT JOIN 
+                           BOARD_CATEGORY USING(CATEGORY_NO) 
+                      JOIN 
+                           MEMBER USING(MEM_NO) 
+                     WHERE 
+                           BOARD_DELETE_YN = 'Y' 
+                  ORDER BY 
+                           BOARD_DATE DESC) A) 
+                     WHERE 
+                           RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectBoardListCount">
+	  SELECT 
+	   COUNT(*) 
+	    FROM 
+	         BOARD 
+   LEFT JOIN 
+			 BOARD_CATEGORY 
+	   USING
+	         (CATEGORY_NO) 
+	   WHERE 
+	         CATEGORY_NO = 3 AND BOARD_DELETE_YN = 'Y'
+	</entry>
+	
+	<entry key="selectBoardList">
+		SELECT * FROM (
+        SELECT ROWNUM RNUM, A.* FROM (
+                    SELECT 
+                           BOARD_NO, 
+                           BOARD_TITLE, 
+                           BOARD_WRITING, 
+                           BOARD_DATE, 
+                           BOARD_HITS, 
+                           BOARD_NAME, 
+                           NICKNAME 
+                      FROM 
+                           BOARD 
+                 LEFT JOIN 
+                           BOARD_CATEGORY USING(CATEGORY_NO) 
+                      JOIN 
+                           MEMBER USING(MEM_NO) 
+                     WHERE 
+                           CATEGORY_NO = 3 
+                       AND 
+                           BOARD_DELETE_YN = 'Y' 
+                  ORDER BY 
+                           BOARD_DATE DESC) A) 
+                     WHERE 
+                           RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectBestBoardListCount">
+	   SELECT 
+	    COUNT(*) 
+	     FROM 
+	          BOARD 
+	LEFT JOIN 
+			  BOARD_CATEGORY USING(CATEGORY_NO) 
+	    WHERE 
+	          BOARD_DELETE_YN = 'Y'
+	</entry>
+	
+	<entry key="selectBestBoardList">
+		SELECT * FROM (      
+        SELECT ROWNUM RNUM, A.* FROM (
+                    SELECT 
+                           BOARD_NO, 
+                           BOARD_TITLE, 
+                           BOARD_WRITING, 
+                           BOARD_DATE, 
+                           BOARD_HITS, 
+                           BOARD_NAME, 
+                           NICKNAME 
+                      FROM 
+                           BOARD 
+                 LEFT JOIN 
+                           BOARD_CATEGORY USING(CATEGORY_NO) 
+                      JOIN 
+                           MEMBER USING(MEM_NO) 
+                     WHERE 
+                           BOARD_DELETE_YN = 'Y' 
+                  ORDER BY 
+                           BOARD_HITS DESC) A) 
+                     WHERE 
+                           RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectProductBoardListCount">
+	   SELECT 
+	    COUNT(*) 
+	     FROM 
+	          BOARD 
+	LEFT JOIN 
+			  BOARD_CATEGORY USING(CATEGORY_NO) 
+	    WHERE 
+	          CATEGORY_NO = 4
+	      AND 
+	          BOARD_DELETE_YN = 'Y'
+	</entry>
+	
+	<entry key="selectProductBoardList">
+		SELECT * FROM (
+        SELECT ROWNUM RNUM, A.* FROM (
+                    SELECT 
+                           BOARD_NO, 
+                           BOARD_TITLE, 
+                           BOARD_WRITING, 
+                           BOARD_DATE, 
+                           BOARD_HITS, 
+                           BOARD_NAME, 
+                           NICKNAME 
+                      FROM 
+                           BOARD 
+                 LEFT JOIN 
+                           BOARD_CATEGORY USING(CATEGORY_NO) 
+                      JOIN 
+                           MEMBER USING(MEM_NO) 
+                     WHERE 
+                           CATEGORY_NO = 4 
+                       AND 
+                           BOARD_DELETE_YN = 'Y' 
+                  ORDER BY 
+                           BOARD_DATE DESC) A) 
+                     WHERE 
+                           RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="insertBoard">
+			INSERT INTO 
+			       BOARD
+			       (BOARD_NO, 
+			        BOARD_TITLE, 
+			        BOARD_WRITING, 
+			        CATEGORY_NO, 
+			        MEM_NO)VALUES(SEQ_BOARD_NO.NEXTVAL,?,?,?,?)
+	</entry>
+	
+	<entry key="insertAttachment">
+		INSERT INTO 
+		       ATTACHMENT
+               (FILE_NO,
+               REF_ANO,
+               REF_BNO,
+               ORIGIN_NAME,
+               CHANGE_NAME,
+               FILE_PATH,
+               UPDATE_DATE)
+        VALUES
+               (SEQ_FILE_NO.NEXTVAL,2,SEQ_BOARD_NO.CURRVAL,?,?,?,SYSDATE)
+	</entry>
+	
+	<entry key="selectAttachment">
+		SELECT 
+			   FILE_NO,
+			   ORIGIN_NAME,
+			   CHANGE_NAME,
+			   FILE_PATH,
+			   UPDATE_DATE 
+		  FROM 
+		       ATTACHMENT 
+		 WHERE 
+		       REF_ANO = 2 AND REF_BNO = ?
+	</entry>
+	
+	<entry key="deleteBoard">
+		UPDATE 
+		       BOARD 
+		   SET 
+		       BOARD_DELETE_YN = 'N' 
+		 WHERE 
+		       BOARD_NO = ?
+	</entry>
+
+	<entry key="insertCount">
+		UPDATE 
+		       BOARD 
+		   SET 
+		       BOARD_HITS = BOARD_HITS + 1 
+		 WHERE 
+		       BOARD_NO = ? 
+		   AND 
+		       BOARD_DELETE_YN = 'Y'
+	</entry>
+	
+	<entry key="updateSelect">
+	   SELECT 
+	          BOARD_NO, 
+	          BOARD_TITLE, 
+	          BOARD_WRITING, 
+	          BOARD_DATE, 
+	          BOARD_HITS, 
+	          BOARD_NAME, 
+	          NICKNAME 
+	     FROM 
+	          BOARD 
+	LEFT JOIN 
+	          BOARD_CATEGORY USING(CATEGORY_NO) 
+	     JOIN 
+	          MEMBER USING(MEM_NO) 
+	    WHERE 
+	          BOARD_NO = ?
+	</entry>
+	
+	<entry key="updateBoard">
+		UPDATE 
+		       BOARD 
+		   SET 
+		       BOARD_TITLE = ?,
+               BOARD_WRITING = ?,
+               CATEGORY_NO = ?
+		 WHERE 
+		       BOARD_NO = ? AND BOARD_DELETE_YN = 'Y'
+	</entry>
+	
+	<entry key="selectReplyList">
+		SELECT 
+			   COMMENT_NO, 
+			   CONTENT, 
+		   	   BOARD_NO, 
+			   NICKNAME, 
+			   GROUP_NUM,
+			   COMMENT_DATE, 
+               MEM_NO
+		  FROM 
+		       BOARD_COMMENT 
+     LEFT JOIN 
+               MEMBER USING(MEM_NO)
+		 WHERE 
+		       BOARD_NO = ? ORDER BY COMMENT_DATE DESC
+	</entry>
+	
+	<entry key="insertReply">
+		INSERT 
+		  INTO 
+		       BOARD_COMMENT(COMMENT_NO,CONTENT,BOARD_NO,MEM_NO) 
+		VALUES 
+		       (SEQ_BOARD_COMMENT_NO.NEXTVAL,?,?,?)
+	</entry>
+	
+	<entry key="replyDelete">
+		DELETE 
+		  FROM 
+		       BOARD_COMMENT 
+		 WHERE 
+		       COMMENT_NO = ? 
+		   AND 
+		       BOARD_NO = ?
+	</entry>
+	
+	<entry key="insertNoticeCount">
+	UPDATE 
+    NOTICE 
+		   SET 
+		       COUNT = COUNT + 1 
+		 WHERE 
+		       NOTICE_NO = 21
+		   AND 
+               CS_CATEGORY_NO = 4 
+           AND 
+               DELETE_YN = 'N'
+	</entry>
+	
+	<entry key="searchTitleSelectCount">
+			  SELECT 
+				     COUNT(*) 
+				FROM 
+				     BOARD 
+			   WHERE 
+				      BOARD_TITLE LIKE '%'||?||'%' AND BOARD_DELETE_YN = 'Y'
+	</entry>
+	
+	<entry key="selectSearchBoardList">
+		SELECT * FROM (      
+        SELECT ROWNUM RNUM, A.* FROM (
+                    SELECT 
+                           BOARD_NO, 
+                           BOARD_TITLE, 
+                           BOARD_WRITING, 
+                           BOARD_DATE, 
+                           BOARD_HITS, 
+                           BOARD_NAME, 
+                           NICKNAME 
+                      FROM 
+                           BOARD 
+                 LEFT JOIN 
+                           BOARD_CATEGORY USING(CATEGORY_NO) 
+                      JOIN 
+                           MEMBER USING(MEM_NO) 
+                     WHERE 
+                           BOARD_DELETE_YN = 'Y' AND BOARD_TITLE LIKE '%'||?||'%' 
+                  ORDER BY 
+                           BOARD_DATE DESC) A) 
+                     WHERE 
+                           RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="searchWriterSelectCount">
+		 SELECT 
+		 COUNT(*) 
+				FROM 
+				     BOARD 
+		   LEFT JOIN 
+					 MEMBER 
+			   USING
+				     (MEM_NO) 
+			   WHERE 
+				      NICKNAME LIKE '%'||?||'%' AND BOARD_DELETE_YN = 'Y'
+	</entry>
+	<entry key="searchWriterBoardList">
+		SELECT * FROM (      
+        SELECT ROWNUM RNUM, A.* FROM (
+                    SELECT 
+                           BOARD_NO, 
+                           BOARD_TITLE, 
+                           BOARD_WRITING, 
+                           BOARD_DATE, 
+                           BOARD_HITS, 
+                           BOARD_NAME, 
+                           NICKNAME 
+                      FROM 
+                           BOARD 
+                 LEFT JOIN 
+                           BOARD_CATEGORY USING(CATEGORY_NO) 
+                      JOIN 
+                           MEMBER USING(MEM_NO) 
+                     WHERE 
+                           BOARD_DELETE_YN = 'Y' AND NICKNAME LIKE '%'||?||'%' 
+                  ORDER BY 
+                           BOARD_DATE DESC) A) 
+                     WHERE 
+                           RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="updateReply">
+		UPDATE 
+		       BOARD_COMMENT 
+		   SET 
+		       CONTENT = ? 
+		 WHERE 
+		       COMMENT_NO = ?
+	</entry>
+	
+	<entry key="searchMainBoard">
+    SELECT 
+           BOARD_NO, 
+           BOARD_TITLE, 
+           BOARD_WRITING, 
+           BOARD_DATE, 
+           BOARD_HITS, 
+           BOARD_NAME, 
+           NICKNAME
+      FROM(
+           SELECT BOARD_NO, 
+           BOARD_TITLE, 
+           BOARD_WRITING, 
+           BOARD_DATE, 
+           BOARD_HITS, 
+           BOARD_NAME, 
+           NICKNAME 
+      FROM 
+           BOARD 
+ LEFT JOIN 
+           BOARD_CATEGORY USING(CATEGORY_NO) 
+      JOIN 
+           MEMBER USING(MEM_NO) 
+     WHERE 
+     	   BOARD_TITLE LIKE '%'||?||'%' 
+       AND 
+           BOARD_DELETE_YN = 'Y' ORDER BY BOARD_DATE DESC) 
+     WHERE 
+           ROWNUM <![CDATA[<=]]> 10
+	</entry>
+</properties>
+
+

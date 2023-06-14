@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="chatselectMyList">
+		SELECT 
+ 			   CHAT_NO
+ 			  ,CHAT_CONTENT
+ 			  ,CASE WHEN TO_CHAR(CHAT_TIME, 'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD') 
+                    THEN TO_CHAR(CHAT_TIME, 'AM HH:MI')
+                    ELSE TO_CHAR(CHAT_TIME, 'MM"월" DD"일"') 
+                    END CHAT_TIME
+              ,CC.ROOM_NO ROOM_NO
+              ,CASE WHEN C.MEM_NO = ?
+              	    THEN CC.MEM_NO 
+              	    ELSE C.MEM_NO END MEM_NO
+              ,CASE WHEN C.MEM_NO = ?
+              	    THEN C.ALARM 
+              	    ELSE C1.ALARM END ALARM
+              ,CHAT_TYPE
+              ,ROOM_STATE
+              ,CR.PRODUCT_NO PRODUCT_NO
+              ,CASE WHEN C.MEM_NO = ?
+              	    THEN MM.NICKNAME 
+              	    ELSE M.NICKNAME END NICKNAME
+	      FROM 
+	      	   CHAT_CONTENT CC
+	      	  ,CHAT C 
+              ,CHAT C1
+	      	  ,CHAT_ROOM CR 
+	      	  ,MEMBER M 
+	      	  ,MEMBER MM
+              ,PRODUCT P
+		 WHERE CC.MEM_NO != C.MEM_NO
+  	  	   AND CC.ROOM_NO = C.ROOM_NO
+           AND CC.MEM_NO = C1.MEM_NO
+           AND C.ROOM_NO = C1.ROOM_NO
+  		   AND CC.ROOM_NO = CR.ROOM_NO
+  		   AND C.MEM_NO = M.MEM_NO
+  	  	   AND CC.MEM_NO = MM.MEM_NO
+           AND CR.PRODUCT_NO = P.PRODUCT_NO(+)
+  		   AND CHAT_NO IN (SELECT MAX(CHAT_NO) 
+  		   	    			 FROM CHAT_CONTENT 
+  		   	    			GROUP BY ROOM_NO)
+  		   AND ROOM_STATE = 'Y'
+  		   AND (C.MEM_NO = ? OR CC.MEM_NO = ?)
+  		   AND  (PRODUCT_TRADE_STATUS = '판매중' OR CR.PRODUCT_NO IS NULL OR P.METHOD = 'A')
+		 ORDER 
+		 	BY CC.CHAT_TIME DESC
+	</entry>
+	
+	<entry key="chatDetailLog">
+		SELECT 
+			   CHAT_NO
+			  ,CHAT_CONTENT
+			  ,TO_CHAR(CHAT_TIME,'AM HH:MI') CHAT_TIME
+			  ,MEM_NO
+  		  FROM 
+  		  	   CHAT_CONTENT
+ 		 WHERE 
+ 		 	   ROOM_NO = ?
+ 		 ORDER 
+    		BY
+               CHAT_CONTENT.CHAT_TIME , CHAT_NO  
+	</entry>
+	
+	<entry key="insertChat">
+		INSERT 
+		  INTO 
+		  	   CHAT_CONTENT(
+		  	   				CHAT_NO
+		  	   	           ,CHAT_CONTENT
+		  	   	           ,ROOM_NO
+		  	   	           ,MEM_NO
+		  	   	           )
+		VALUES(
+			   SEQ_CHAT_NO.NEXTVAL
+			  ,?
+			  ,?
+			  ,?
+			   )
+	</entry>
+	
+	<entry key="updateAlarm">
+		UPDATE 
+			   CHAT 
+		   SET
+		   	   ALARM = ? 
+		 WHERE 
+		 	   MEM_NO = ? 
+		   AND 
+		   	   ROOM_NO = ?
+	</entry>
+	
+	<entry key="updateRoom">
+		UPDATE
+			   CHAT_ROOM
+		   SET
+		   	   ROOM_STATE = ?
+		 WHERE
+		   	   ROOM_NO = ?
+	</entry>
+	
+	<entry key="checkRoomState">
+		SELECT 
+			   COUNT(ROOM_NO) COUNT
+			  ,ROOM_STATE
+			  ,ROOM_NO
+		  FROM
+		  	   CHAT_ROOM
+		  JOIN
+		  	   CHAT USING(ROOM_NO)
+		 WHERE
+		 	   (MEM_NO = ? OR MEM_NO = ?)
+		   AND
+		   	   (CHAT_TYPE = ? OR TO_CHAR(PRODUCT_NO) = ?)
+		 GROUP
+		 	BY
+		 	   ROOM_NO, ROOM_STATE, ROOM_NO
+		HAVING
+			   COUNT(ROOM_NO) = 2
+	</entry>
+	
+	<entry key="createProductRoom">
+		INSERT 
+		  INTO 
+			  CHAT_ROOM(ROOM_NO, CHAT_TYPE, PRODUCT_NO) 
+		VALUES 
+			  (SEQ_ROOM_NO.NEXTVAL, 'P', ?)
+	</entry>
+	
+	<entry key="createNormalRoom">
+		INSERT 
+		  INTO 
+			   CHAT_ROOM(ROOM_NO) 
+		VALUES 
+			   (SEQ_ROOM_NO.NEXTVAL)
+	</entry>
+	
+	<entry key="insertRoomMember">
+		INSERT 
+		  INTO 
+		  	   CHAT(ROOM_NO,MEM_NO)
+		VALUES 
+			  (SEQ_ROOM_NO.CURRVAL,?)
+	</entry>
+	
+	<entry key="insertBlankChat">
+		INSERT
+		  INTO
+		  	   CHAT_CONTENT(CHAT_NO,CHAT_CONTENT,ROOM_NO,MEM_NO)
+		VALUES
+			  (
+			   SEQ_CHAT_NO.NEXTVAL
+			  ,<![CDATA['&nbsp;']]>
+			  ,SEQ_ROOM_NO.CURRVAL
+			  ,?
+			  )
+	</entry>
+	
+	<entry key="insertCompleteChat">
+		INSERT
+		  INTO
+		  	   CHAT_CONTENT(CHAT_NO,CHAT_CONTENT,ROOM_NO,MEM_NO)
+		VALUES
+			  (
+			   SEQ_CHAT_NO.NEXTVAL
+			  ,?
+			  ,SEQ_ROOM_NO.CURRVAL
+			  ,1
+			  )
+	</entry>
+	
+	<entry key="updateProductRoom">
+		UPDATE
+			   CHAT_ROOM
+		   SET
+		   	   ROOM_STATE = 'N'
+		 WHERE
+		   	   PRODUCT_NO = ?
+	</entry>
+	
+</properties>
